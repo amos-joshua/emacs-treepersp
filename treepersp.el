@@ -5,27 +5,21 @@
 ;; Keywords: convenience, treemacs, projectile
 ;; URL: https://github.com/your-username/my-emacs-config
 
+;;; Commentary:
+
+;; treemacs + perspmode
+
 ;;; Code:
 
 (require 'treemacs-core)
-(require 'projectile)
+(require 'persp-mode)
 
-(use-package treemacs
-  :ensure t
-  :config
-  (setq treemacs-width 30)
-)
 
-(use-package projectile
-  :ensure t
-  :config
-  (setq projectile-enable-caching t)
-)
+(defun treepersp-test-install ()
+  "Display a message to confirm a successful treepersp installation."
+  (interactive)
+  (message "Treepersp package loaded successfully!"))
 
-(use-package treemacs-projectile
-  :ensure t
-  :after (treemacs projectile))
+(provide 'treepersp)
 
-(provide 'my-treemacs-projectile-config)
-
-;;; my-treemacs-projectile-config.el ends here
+;;; treepersp.el ends here
