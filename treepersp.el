@@ -93,7 +93,13 @@
   )
 
   
-
+(defun treepersp-go-to-treemacs ()
+  "Show the Treemacs window if it's not visible."
+  (interactive)
+  (if (eq (treemacs-current-visibility) 'visible)
+      (treemacs-select-window)
+    (treemacs))
+  )
 
 
 (defun treepersp-choose-workspace ()
