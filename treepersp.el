@@ -14,13 +14,6 @@
 ;(require 'treemacs-core)
 ;(require 'persp-mode)
 
-(defun treepersp-switch-num (perspnum)
-  (interactive)
-  (let ((proj (nth perspnum (persp-names))))
-    (message "hello")
-    (message proj)
-       )
-  )
 
 (defun treepersp-persp-with-prefix (prefix)
   (let ((matchingWorkspace nil))
@@ -34,27 +27,36 @@
 
 (defun treepersp-switch-prefix (prefix)
   (interactive)
+  (message "-------------------")
    (let ((workspace (treepersp-persp-with-prefix prefix)))
      (when workspace
-       (message workspace)
+       (message "[%s]" workspace)
        (persp-switch workspace)
        )
      (unless workspace
-       (let ((workspace (treepersp-choose-workspace)))
+       (let* (
+             (workspace (treepersp-choose-workspace))
+             (prefixed-workspace (format "%s-%s" prefix workspace))
+             )
          (when workspace
-           (persp-switch (format "%s-%s" prefix workspace))
+           (persp-switch prefixed-workspace)
            )
          )
-     (message "no workspace with prefix '%s'" prefix)
+       )
      )
+   (message "=========================")
    )
-   )
+
+(defun treepersp-persp-names ()
+  (interactive)
+  (persp-names)
+  )
 
 (defun treepersp-clear-prefix (prefix)
   (interactive)
    (let ((workspace (treepersp-persp-with-prefix prefix)))
      (when workspace
-       (persp-remove-by-name workspace)
+       (persp-kill workspace)
        (message "Cleared workspace #%s: %s" prefix workspace)
        )
      )
@@ -79,17 +81,18 @@
     )
   )
 
-(defun treepersp-switch-to-treemacs-workspace (workspace-name)
-    "Switch to treemacs workspace by name."
-    (let ((workspaces (treemacs-workspaces))
-          (found nil))
-      ;; Check if workspace exists
-      (dolist (ws workspaces)
-        (when (string= (treemacs-workspace->name ws) workspace-name)
-          (setq found t)))
-      (if found
-          (treemacs-switch-workspace workspace-name)
-        (message "Workspace '%s' not found" workspace-name))))
+(defun treepersp-switch-to-matching-treemacs-workspace (prefixed-workspace)
+  (let ((workspace (treepersp-treemacs-matching-name-as-suffix prefixed-workspace)))
+    (when workspace
+      (treemacs-do-switch-workspace workspace)
+      (treemacs--init)
+      )
+    (unless workspace
+      (message "workspace %s not found" prefixed-workspace)
+      )
+    )
+  )
+  
 
 
 
@@ -111,12 +114,16 @@
 
 ;;; treepersp.el ends here
 
-(treepersp-treemacs-workspace-names)
-
 (defun treepersp-treemacs-workspace-names ()
 (mapcar (lambda (ws) (treemacs-workspace->name ws))
         (treemacs-workspaces))
 )
 
-(treepersp-choose-workspace)
 
+
+
+(treepersp-switch-prefix "1")
+(treepersp-switch-prefix "2")
+(treepersp-switch-prefix "3")
+
+(treepersp-clear-prefix "3")
