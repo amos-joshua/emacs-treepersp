@@ -11,8 +11,8 @@
 
 ;;; Code:
 
-;(require 'treemacs-core)
-;(require 'persp-mode)
+(require 'treemacs)
+(require 'perspective)
 
 
 (defun treepersp-persp-with-prefix (prefix)
@@ -25,6 +25,7 @@
      matchingWorkspace)
   )
 
+;;;###autoload
 (defun treepersp-switch-prefix (prefix)
   (interactive)
   (message "-------------------")
@@ -61,6 +62,7 @@
   (persp-names)
   )
 
+;;;###autoload
 (defun treepersp-clear-prefix (prefix)
   (interactive)
    (let ((workspace (treepersp-persp-with-prefix prefix)))
@@ -103,6 +105,18 @@
       selected))
   )
 
+(defun treepersp-treemacs-workspace-names ()
+  (mapcar (lambda (ws) (treemacs-workspace->name ws))
+          (treemacs-workspaces)))
+
+(defun treepersp-treemacs-first-project-path (workspace)
+  "Get the path of the first project in WORKSPACE, or nil if none exists."
+  (when workspace
+    (let ((projects (treemacs-workspace->projects workspace)))
+      (when projects
+        (treemacs-project->path (car projects))))))
+
+;;;###autoload
 (defun treepersp-test-install ()
   "Display a message to confirm a successful treepersp installation."
   (interactive)
@@ -111,23 +125,3 @@
 (provide 'treepersp)
 
 ;;; treepersp.el ends here
-
-(defun treepersp-treemacs-workspace-names ()
-(mapcar (lambda (ws) (treemacs-workspace->name ws))
-        (treemacs-workspaces))
-)
-
-(defun treepersp-treemacs-first-project-path (workspace)
-    "Get the path of the first project in WORKSPACE, or nil if none exists."
-    (when workspace
-      (let ((projects (treemacs-workspace->projects workspace)))
-        (when projects
-          (treemacs-project->path (car projects))))))
-
-
-
-(treepersp-switch-prefix "1")
-(treepersp-switch-prefix "2")
-(treepersp-switch-prefix "3")
-
-(treepersp-clear-prefix "3")
