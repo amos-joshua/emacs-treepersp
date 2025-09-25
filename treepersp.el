@@ -35,11 +35,20 @@
        )
      (unless workspace
        (let* (
-             (workspace (treepersp-choose-workspace))
-             (prefixed-workspace (format "%s-%s" prefix workspace))
+              (workspace-name (treepersp-choose-workspace))
+              (prefixed-workspace (format "%s-%s" prefix workspace-name))
+               (treespace (treepersp-treemacs-matching-name-as-suffix workspace-name))
+               (treepath (treepersp-treemacs-first-project-path treespace))
              )
-         (when workspace
+         (when workspace-name
            (persp-switch prefixed-workspace)
+           (message "opening new path %s from %S" treepath treespace)
+           (when treepath
+             (find-file treepath)
+             (treemacs-do-switch-workspace treespace)
+             (treemacs)
+             )
+
            )
          )
        )
@@ -81,17 +90,6 @@
     )
   )
 
-(defun treepersp-switch-to-matching-treemacs-workspace (prefixed-workspace)
-  (let ((workspace (treepersp-treemacs-matching-name-as-suffix prefixed-workspace)))
-    (when workspace
-      (treemacs-do-switch-workspace workspace)
-      (treemacs--init)
-      )
-    (unless workspace
-      (message "workspace %s not found" prefixed-workspace)
-      )
-    )
-  )
   
 
 
@@ -119,6 +117,12 @@
         (treemacs-workspaces))
 )
 
+(defun treepersp-treemacs-first-project-path (workspace)
+    "Get the path of the first project in WORKSPACE, or nil if none exists."
+    (when workspace
+      (let ((projects (treemacs-workspace->projects workspace)))
+        (when projects
+          (treemacs-project->path (car projects))))))
 
 
 
