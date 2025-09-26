@@ -28,7 +28,6 @@
 ;;;###autoload
 (defun treepersp-switch-prefix (prefix)
   (interactive)
-  (message "-------------------")
    (let ((workspace (treepersp-persp-with-prefix prefix)))
      (when workspace
        (message "[%s]" workspace)
@@ -43,7 +42,6 @@
              )
          (when workspace-name
            (persp-switch prefixed-workspace)
-           (message "opening new path %s from %S" treepath treespace)
            (when treepath
              (find-file treepath)
              (treemacs-do-switch-workspace treespace)
@@ -54,7 +52,6 @@
          )
        )
      )
-   (message "=========================")
    )
 
 (defun treepersp-persp-names ()
@@ -64,15 +61,14 @@
 
 ;;;###autoload
 (defun treepersp-clear-prefix (prefix)
-  (interactive)
-   (let ((workspace (treepersp-persp-with-prefix prefix)))
-     (when workspace
-       (persp-kill workspace)
-       (message "Cleared workspace #%s: %s" prefix workspace)
-       )
-     )
-
-  )
+  "Clear the workspace with the given PREFIX.
+If called interactively without an argument, prompt for PREFIX."
+  (interactive
+   (list (read-string "Enter workspace prefix: ")))
+  (let ((workspace (treepersp-persp-with-prefix prefix)))
+    (when workspace
+      (persp-kill workspace)
+      (message "Cleared workspace #%s: %s" prefix workspace))))
 
 
 (defun treepersp-treemacs-matching-name-as-suffix (prefixed-workspace)
