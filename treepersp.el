@@ -45,7 +45,6 @@
            (when treepath
              (find-file treepath)
              (treemacs-do-switch-workspace treespace)
-             (treemacs)
              )
 
            )
